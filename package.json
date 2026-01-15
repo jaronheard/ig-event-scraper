@@ -1,0 +1,21 @@
+{
+  "name": "ig-event-scraper",
+  "module": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "setup": "bun run src/index.ts --setup",
+    "scrape": "bun run src/index.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@ai-sdk/openai-compatible": "^2.0.9",
+    "@openrouter/ai-sdk-provider": "^1.5.4",
+    "ai": "^6.0.33",
+    "playwright": "^1.57.0"
+  }
+}
