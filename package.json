@@ -1,22 +1,59 @@
 {
   "name": "ig-event-scraper",
-  "module": "src/index.ts",
-  "type": "module",
+  "version": "1.0.0",
+  "description": "Desktop app that scrapes Instagram stories for events",
+  "main": "dist/main/main.js",
   "scripts": {
-    "setup": "bun run src/index.ts --setup",
-    "scrape": "bun run src/index.ts"
+    "build": "tsc",
+    "start": "npm run build && electron .",
+    "dev": "tsc && electron .",
+    "pack": "npm run build && electron-builder --dir",
+    "dist": "npm run build && electron-builder",
+    "postinstall": "electron-builder install-app-deps"
   },
   "devDependencies": {
-    "@types/bun": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^5.0.0"
+    "@types/node": "^20.11.0",
+    "electron": "^33.3.1",
+    "electron-builder": "^25.1.8",
+    "typescript": "^5.7.0"
   },
   "dependencies": {
-    "@ai-sdk/openai-compatible": "^2.0.9",
-    "@openrouter/ai-sdk-provider": "^1.5.4",
+    "@openrouter/ai-sdk-provider": "^2.1.1",
     "ai": "^6.0.33",
+    "electron-store": "^8.2.0",
+    "electron-updater": "^6.3.9",
     "playwright": "^1.57.0",
     "sharp": "^0.34.5"
+  },
+  "build": {
+    "appId": "com.scenescout.app",
+    "productName": "Scene Scout",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "assets/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "node_modules/playwright/.local-browsers",
+        "to": "playwright-browsers",
+        "filter": ["chromium-*/**/*"]
+      }
+    ],
+    "mac": {
+      "category": "public.app-category.social-networking",
+      "icon": "assets/icon.icns",
+      "target": ["dmg"]
+    },
+    "win": {
+      "icon": "assets/icon.ico",
+      "target": ["nsis"]
+    },
+    "linux": {
+      "icon": "assets/icon.png",
+      "target": ["AppImage"]
+    }
   }
 }

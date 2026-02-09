@@ -177,3 +177,11 @@ dist
 # Project-specific
 auth/
 events/
+temp_screenshot.png
+
+# Electron / build output
+dist/
+release/
+*.dmg
+*.exe
+*.AppImage
