@@ -14,6 +14,13 @@ const STORY_DELAY_MS = 1500;
 const MAX_STUCK = 3;
 
 async function getUsername(page: Page): Promise<string> {
+  // Primary: extract from URL — stories URLs are /stories/USERNAME/STORY_ID/
+  const urlMatch = page.url().match(/\/stories\/([^/]+)\//);
+  if (urlMatch && urlMatch[1]) {
+    return urlMatch[1];
+  }
+
+  // Fallback: DOM selectors
   try {
     const usernameLink = page
       .locator('section[role="presentation"] a[href^="/"]')
@@ -80,7 +87,8 @@ export interface ScanResult {
 }
 
 export async function runScraper(
-  onProgress?: (msg: string) => void
+  onProgress?: (msg: string) => void,
+  hiddenAccounts: string[] = []
 ): Promise<ScanResult> {
   const sessionPath = getSessionPath();
   const tempScreenshot = getTempScreenshotPath();
@@ -157,6 +165,22 @@ export async function runScraper(
       storyCount++;
       const username = await getUsername(page);
       log(`Story ${storyCount}: @${username}`);
+
+      if (hiddenAccounts.includes(username)) {
+        log(`  -> Skipped (account hidden)`);
+        await page.waitForTimeout(STORY_DELAY_MS);
+        const advanced = await nextStory(page);
+        if (!advanced) {
+          log("Reached end of stories.");
+          break;
+        }
+        await page.waitForTimeout(500);
+        if (!(await isStoryView(page))) {
+          log("Exited story view.");
+          break;
+        }
+        continue;
+      }
 
       const viewportSize = page.viewportSize();
       if (viewportSize) {
